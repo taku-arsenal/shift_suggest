@@ -1,0 +1,46 @@
+function fillBlanksWithRandom() {
+  var sheetId = "xxxxxxx"; // スプレッドシートのIDを指定
+  var sheet = SpreadsheetApp.openById(sheetId).getActiveSheet();
+  var startRow = 4; // 開始行
+  var endRow = 63; // 終了行
+  var rangeColumns = ["J", "K", "L", "M", "N", "O"]; // 範囲の列
+
+  for (var row = startRow; row <= endRow; row++) {
+    var dayOfWeek = sheet.getRange("B" + row).getValue();
+
+    // B列に"土"もしくは"日"が書かれている行は処理をスキップ
+    if (dayOfWeek === "土" || dayOfWeek === "日") {
+      continue;
+    }
+
+    var filledCells = [];
+
+    for (var i = 0; i < rangeColumns.length; i++) {
+      var cell = sheet.getRange(rangeColumns[i] + row);
+      if (cell.getValue() === "〇") {
+        filledCells.push(cell);
+      }
+    }
+
+    if (filledCells.length === 0) {
+      var blankCells = [];
+
+      for (var i = 0; i < rangeColumns.length; i++) {
+        var cell = sheet.getRange(rangeColumns[i] + row);
+        if (cell.isBlank()) {
+          blankCells.push(cell);
+        }
+      }
+
+      if (blankCells.length > 0) {
+        var randomCell = blankCells[Math.floor(Math.random() * blankCells.length)];
+        randomCell.setValue("〇");
+      }
+    }
+
+    // 63行目の処理で終了
+    if (row === endRow) {
+      break;
+    }
+  }
+}
